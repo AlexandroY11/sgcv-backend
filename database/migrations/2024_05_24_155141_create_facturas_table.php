@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('total', 8, 2);
             $table->timestamp('fecha_emision');
             $table->string('estado');
-            $table->timestamps();
+            
 
             $table->foreign('cita_id')->references('id')->on('citas')->onDelete('cascade');
         });

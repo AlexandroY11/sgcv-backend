@@ -9,6 +9,11 @@ class HistorialMedico extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+
+    protected $table = 'historiales_medicos';
+
     protected $fillable = [
         'detalles'
     ];

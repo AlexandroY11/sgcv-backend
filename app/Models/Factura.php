@@ -9,6 +9,9 @@ class Factura extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+
     protected $fillable = [
         'cita_id',
         'total',

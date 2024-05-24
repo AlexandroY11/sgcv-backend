@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('edad');
             $table->float('peso');
             $table->unsignedBigInteger('historial_medico_id');
-            $table->timestamps();
+            
 
             $table->foreign('historial_medico_id')->references('id')->on('historiales_medicos')->onDelete('cascade');
         });

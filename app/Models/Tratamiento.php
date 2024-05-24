@@ -9,6 +9,9 @@ class Tratamiento extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+
     protected $fillable = [
         'descripcion',
         'costo'

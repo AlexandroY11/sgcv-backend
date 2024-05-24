@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('historiales_medicos', function (Blueprint $table) {
             $table->id();
             $table->text('detalles');
-            $table->timestamps();
+            
         });
     }
 

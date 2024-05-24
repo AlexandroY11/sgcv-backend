@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('tipo');
             $table->unsignedBigInteger('empleado_id');
             $table->string('estado');
-            $table->timestamps();
+            
 
             $table->foreign('paciente_id')->references('id')->on('pacientes')->onDelete('cascade');
             $table->foreign('empleado_id')->references('id')->on('empleados')->onDelete('cascade');

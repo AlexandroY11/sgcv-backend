@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('apellido');
             $table->string('cargo');
             $table->decimal('salario', 8, 2);
-            $table->timestamps();
+            
         });
     }
 
