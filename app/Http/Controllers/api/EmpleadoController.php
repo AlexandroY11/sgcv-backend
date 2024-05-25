@@ -17,6 +17,13 @@ class EmpleadoController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'cargo' => 'required|string|max:255',
+            'salario' => 'required|numeric|min:0',
+        ]);
+
         $empleado = new Empleado();
         $empleado->nombre = $request->nombre;
         $empleado->apellido = $request->apellido;
@@ -31,7 +38,7 @@ class EmpleadoController extends Controller
     {
         $empleado = Empleado::find($id);
         
-        if(is_null($empleado)){
+        if (is_null($empleado)) {
             return abort(404);
         }
 
@@ -40,7 +47,18 @@ class EmpleadoController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'apellido' => 'required|string|max:255',
+            'cargo' => 'required|string|max:255',
+            'salario' => 'required|numeric|min:0',
+        ]);
+
         $empleado = Empleado::find($id);
+        if (is_null($empleado)) {
+            return abort(404);
+        }
+
         $empleado->nombre = $request->nombre;
         $empleado->apellido = $request->apellido;
         $empleado->cargo = $request->cargo;
@@ -53,10 +71,13 @@ class EmpleadoController extends Controller
     public function destroy($id)
     {
         $empleado = Empleado::find($id);
+        if (is_null($empleado)) {
+            return abort(404);
+        }
         $empleado->delete();
 
         $empleados = Empleado::all();
 
-        return json_encode([ 'empleados' => $empleados, 'success' => true]);
+        return json_encode(['empleados' => $empleados, 'success' => true]);
     }
 }

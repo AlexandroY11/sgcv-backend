@@ -12,7 +12,7 @@ class PacienteController extends Controller
     public function index()
     {
         $pacientes = DB::table('pacientes')
-            ->join('historiales_medicos', 'historiales_medicos.id', '=', 'pacientes.id')
+            ->join('historiales_medicos', 'historiales_medicos.id', '=', 'pacientes.historial_medico_id')
             ->select('pacientes.*', 'historiales_medicos.detalles')
             ->get();
 
@@ -21,6 +21,15 @@ class PacienteController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'especie' => 'required|string|max:255',
+            'raza' => 'required|string|max:255',
+            'edad' => 'required|integer|min:0',
+            'peso' => 'required|numeric|min:0',
+            'historial_medico_id' => 'required|exists:historiales_medicos,id',
+        ]);
+
         $paciente = new Paciente();
         $paciente->nombre = $request->nombre;
         $paciente->especie = $request->especie;
@@ -37,20 +46,31 @@ class PacienteController extends Controller
     {
         $paciente = Paciente::find($id);
         
-        if(is_null($paciente)){
+        if (is_null($paciente)) {
             return abort(404);
         }
 
-        $historiales_medicos = DB::table('historiales_medicos')
-            ->orderBy('detalles')
-            ->get();
+        $historiales_medicos = DB::table('historiales_medicos')->orderBy('detalles')->get();
 
         return json_encode(compact('paciente', 'historiales_medicos'));
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'especie' => 'required|string|max:255',
+            'raza' => 'required|string|max:255',
+            'edad' => 'required|integer|min:0',
+            'peso' => 'required|numeric|min:0',
+            'historial_medico_id' => 'required|exists:historiales_medicos,id',
+        ]);
+
         $paciente = Paciente::find($id);
+        if (is_null($paciente)) {
+            return abort(404);
+        }
+
         $paciente->nombre = $request->nombre;
         $paciente->especie = $request->especie;
         $paciente->raza = $request->raza;
@@ -65,13 +85,16 @@ class PacienteController extends Controller
     public function destroy($id)
     {
         $paciente = Paciente::find($id);
+        if (is_null($paciente)) {
+            return abort(404);
+        }
         $paciente->delete();
 
         $pacientes = DB::table('pacientes')
-        ->join('historiales_medicos', 'historiales_medicos.id', '=', 'pacientes.id')
-        ->select('pacientes.*', 'historiales_medicos.detalles')
-        ->get();
+            ->join('historiales_medicos', 'historiales_medicos.id', '=', 'pacientes.historial_medico_id')
+            ->select('pacientes.*', 'historiales_medicos.detalles')
+            ->get();
 
-            return json_encode([ 'pacientes' => $pacientes, 'success' => true]);
+        return json_encode(['pacientes' => $pacientes, 'success' => true]);
     }
 }

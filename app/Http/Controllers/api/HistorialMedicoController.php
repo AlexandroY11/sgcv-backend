@@ -13,11 +13,14 @@ class HistorialMedicoController extends Controller
         $historialesMedicos = HistorialMedico::all();
 
         return json_encode(compact('historialesMedicos'));
-
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'detalles' => 'required|string|max:65535',
+        ]);
+
         $historialMedico = new HistorialMedico();
         $historialMedico->detalles = $request->detalles;
         $historialMedico->save();
@@ -29,7 +32,7 @@ class HistorialMedicoController extends Controller
     {
         $historialMedico = HistorialMedico::find($id);
         
-        if(is_null($historialMedico)){
+        if (is_null($historialMedico)) {
             return abort(404);
         }
 
@@ -38,7 +41,15 @@ class HistorialMedicoController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'detalles' => 'required|string|max:65535',
+        ]);
+
         $historialMedico = HistorialMedico::find($id);
+        if (is_null($historialMedico)) {
+            return abort(404);
+        }
+
         $historialMedico->detalles = $request->detalles;
         $historialMedico->save();
 
@@ -48,12 +59,13 @@ class HistorialMedicoController extends Controller
     public function destroy($id)
     {
         $historialMedico = HistorialMedico::find($id);
+        if (is_null($historialMedico)) {
+            return abort(404);
+        }
         $historialMedico->delete();
 
         $historialesMedicos = HistorialMedico::all();
 
-        return json_encode([ 'historialesMedicos' => $historialesMedicos, 'success' => true]);
-
+        return json_encode(['historialesMedicos' => $historialesMedicos, 'success' => true]);
     }
 }
-

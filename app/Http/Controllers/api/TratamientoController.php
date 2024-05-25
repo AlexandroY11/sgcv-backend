@@ -13,11 +13,15 @@ class TratamientoController extends Controller
         $tratamientos = Tratamiento::all();
 
         return json_encode(compact('tratamientos'));
-
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'descripcion' => 'required|string|max:65535',
+            'costo' => 'required|numeric|min:0',
+        ]);
+
         $tratamiento = new Tratamiento();
         $tratamiento->descripcion = $request->descripcion;
         $tratamiento->costo = $request->costo;
@@ -30,7 +34,7 @@ class TratamientoController extends Controller
     {
         $tratamiento = Tratamiento::find($id);
         
-        if(is_null($tratamiento)){
+        if (is_null($tratamiento)) {
             return abort(404);
         }
 
@@ -39,7 +43,16 @@ class TratamientoController extends Controller
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'descripcion' => 'required|string|max:65535',
+            'costo' => 'required|numeric|min:0',
+        ]);
+
         $tratamiento = Tratamiento::find($id);
+        if (is_null($tratamiento)) {
+            return abort(404);
+        }
+
         $tratamiento->descripcion = $request->descripcion;
         $tratamiento->costo = $request->costo;
         $tratamiento->save();
@@ -50,11 +63,13 @@ class TratamientoController extends Controller
     public function destroy($id)
     {
         $tratamiento = Tratamiento::find($id);
+        if (is_null($tratamiento)) {
+            return abort(404);
+        }
         $tratamiento->delete();
 
         $tratamientos = Tratamiento::all();
 
-        return json_encode([ 'tratamientos' => $tratamientos, 'success' => true]);
-
+        return json_encode(['tratamientos' => $tratamientos, 'success' => true]);
     }
 }

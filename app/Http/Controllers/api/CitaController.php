@@ -22,11 +22,18 @@ class CitaController extends Controller
             ->get();
 
         return json_encode(compact('citas'));
-
     }
 
     public function store(Request $request)
     {
+        $request->validate([
+            'paciente_id' => 'required|exists:pacientes,id',
+            'fecha_hora' => 'required|date',
+            'tipo' => 'required|string|in:consulta,vacunación,cirugía,otro',
+            'empleado_id' => 'required|exists:empleados,id',
+            'estado' => 'required|string|in:pendiente,completada,cancelada',
+        ]);
+
         $cita = new Cita();
         $cita->paciente_id = $request->paciente_id;
         $cita->fecha_hora = $request->fecha_hora;
@@ -42,24 +49,31 @@ class CitaController extends Controller
     {
         $cita = Cita::find($id);
         
-        if(is_null($cita)){
+        if (is_null($cita)) {
             return abort(404);
         }
 
-        $pacientes = DB::table('pacientes')
-            ->orderBy('nombre')
-            ->get();
-        
-        $empleados = DB::table('empleados')
-            ->orderBy('nombre')
-            ->get();
+        $pacientes = DB::table('pacientes')->orderBy('nombre')->get();
+        $empleados = DB::table('empleados')->orderBy('nombre')->get();
 
         return json_encode(compact('cita', 'pacientes', 'empleados'));
     }
 
     public function update(Request $request, $id)
     {
+        $request->validate([
+            'paciente_id' => 'required|exists:pacientes,id',
+            'fecha_hora' => 'required|date',
+            'tipo' => 'required|string|in:consulta,vacunación,cirugía,otro',
+            'empleado_id' => 'required|exists:empleados,id',
+            'estado' => 'required|string|in:pendiente,completada,cancelada',
+        ]);
+
         $cita = Cita::find($id);
+        if (is_null($cita)) {
+            return abort(404);
+        }
+
         $cita->paciente_id = $request->paciente_id;
         $cita->fecha_hora = $request->fecha_hora;
         $cita->tipo = $request->tipo;
@@ -73,6 +87,9 @@ class CitaController extends Controller
     public function destroy($id)
     {
         $cita = Cita::find($id);
+        if (is_null($cita)) {
+            return abort(404);
+        }
         $cita->delete();
 
         $citas = DB::table('citas')
@@ -85,6 +102,6 @@ class CitaController extends Controller
             )
             ->get();
 
-        return json_encode([ 'citas' => $citas, 'success' => true]);
+        return json_encode(['citas' => $citas, 'success' => true]);
     }
 }
